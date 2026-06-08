@@ -1,0 +1,36 @@
+Learning Summary
+
+Understandings:
+* This data represents the overall supply chain efficiency by taking in account the factors including resource utilization, delivery efficiency, etc.
+* We can study the supply chain efficiency of the data by looking into the SupplyChain_Efficiency_Label which depends on many things and at last gives the idea of the overall supply chain efficiency from the data .
+* The supply chain efficiency label is categorized into 3 levels, that is -
+o 0
+o 1
+o 2
+* Just like supply chain efficiency label, Inventory level is also categorized into 3 levels, that is -
+o Low
+o Medium
+o High
+* By studying the correlation between the different columns of the dataset, we come to know that SupplyChain_Efficiency_Label depends the most on Delivery_Efficiency (58%) followed by Resource_Utilization (47%).
+* Looking into the count plot for SupplyChain_Efficiency_Label, the level 0 dominates being the highest in count, followed by level 1, then level 2 which has the lowest count, which means the efficiency is produced greatest of the level 0 and least of level 2, which means that the overall supply chain efficiency obtained is on the lower side.
+
+Challenges:
+* Trying to analyse what the data actually represents, the different terms involved in it and how each one connects with the other.
+* Trying different plots and analysing them.
+* Trying to predict which things will influence the overall Supplychain_Efficiency_Label and the other factors of the data.
+
+Useful Visualizations:
+* The correlation heatmap, which showed the correlation between different columns of the data and helped to draw the conclusion of what factors are most dependent on SupplyChain_Efficiency_Label.
+* The countplot of different levels of SupplyChain_Efficiency_Label which helped to predict the overall efficiency from the data given whether it is on the lower side or the upper.
+
+Insights:
+* This data didn’t contain any null value and didn’t have any duplicated row or column either.
+* The Medium inventory level has the maximum level 0 Supplychain Efficiency while low inventory level has the maximum level 1 Supplychain Efficiency.
+* The plot of Logistics_Cost vs Inventory_Level shows the behavior that is expected.
+* The Logistics Cost of level 2 Supplychain Efficiency is the highest while that of level 1 is the lowest.
+* The Downtime Hours of level 1 Supplychain Efficiency is the highest while that of level 2 is the lowest.
+* The histogram of Delivery Efficiency shows the peak between 85-90%, and the lowest between 70-75% which is good as efficiency.
+* The Condition score peaks between 80-90 and lowest between 90-100 which tells that overall condition score is above average.
+* In the Scatter Plot between Delivery_Efficiency and Resource_Utilization, the Supplychain_Efficiency_Label level 0 occupies the bottom-left region, the level 2 occupies the top-right region, and level 1 occupies the region in the between the level 0 and 2. 
+* The correlation heatmap shows the maximum correlation of Supplychain_Efficiency_Label is with Resource_Utilization and Delivery_Efficiency.
+* Without hue, the scatter plots obtained in the pairplots are all random.
