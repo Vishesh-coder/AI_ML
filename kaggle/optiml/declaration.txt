@@ -1,0 +1,28 @@
+DECLARATION OF ORIGINALITY AND COMPLIANCE
+
+Competition: Nexus Opti-ML 2026 - Operation Insight
+Team Name: Obsidian
+Date: October 19, 2026
+
+Team Members:
+1. Niraj Kushwaha
+2. Vishesh Bindal
+
+We, the undersigned members of Team Obsidian, hereby jointly and individually declare that:
+1. We did not share code, notebooks, model files, or prediction CSV files with any other teams participating in this competition outside the public forum.
+2. We did not use, borrow, inspect, or incorporate any other team's submission, private code, or predictions.
+3. We did not hand-label, manually inspect, or manually alter any test set rows or target values.
+4. We did not use any external data beyond the official dataset provided by the competition organizers (nexus-opti-ml-2026-operation-insight).
+5. All work, feature engineering implementations, model training pipelines, post-processing strategies, and submitted files are entirely our own original work.
+
+Signatures:
+
+Member 1:
+Name: Niraj Kushwaha
+Signature: Niraj Kushwaha
+Date: October 19, 2026
+
+Member 2:
+Name: Vishesh Bindal
+Signature: Vishesh Bindal
+Date: October 19, 2026

@@ -1,0 +1,90 @@
+================================================================================
+NEXUS OPTI-ML 2026: TECHNICAL WRITEUP
+Team Name: Obsidian
+Team Members: Niraj Kushwaha, Vishesh Bindal
+================================================================================
+
+1. DATA JOINS, TIMESTAMPS/CLOCKS, AND MISSING VALUES
+----------------------------------------------------
+- Data Joins:
+  Customer demographics were integrated using a point-in-time backward merge_asof
+  join on record_updated_at against order_ts keyed on customer_id. This eliminated
+  future data leakage from 2025 profile updates into earlier orders. A fallback to
+  the customer's earliest recorded record was applied for orders preceding the first
+  update timestamp. Store and product attributes were joined via standard relational
+  left joins on store_id and product_id. Twenty anomalous records from December 2022
+  prior to platform launch were removed. Twelve product category typographical
+  errors were normalized into 32 canonical groups.
+
+- Timestamps and Clocks:
+  Temporal lifecycles were constructed by calculating elapsed days for customer
+  tenure (order_ts - signup_date), product market age (order_ts - launch_date), and
+  store operating age (order_ts - opened_date). Cyclic temporal signals were
+  captured via order hour, day of the week, and year-month cohorts. Behavioral
+  sequence intervals were modeled by extracting inter-order elapsed durations at both
+  the customer-category level and the customer-order level.
+
+- Missing Value Treatment:
+  Physical product dimensions (length, width, height) and weight were imputed using
+  domain medians to derive volume, density, and surface area. Missing values in
+  discounts and freight charges were imputed to zero with explicit missingness
+  indicators (discount_is_na, freight_is_na). Missing categorical entries were
+  consistently assigned a dedicated "missing" category for native tree handling.
+
+
+2. VALIDATION METHODOLOGY AND EXACT SPLIT
+-----------------------------------------
+- A strict chronological Out-of-Time (OOT) validation framework was established to
+  mirror the test horizon and eliminate temporal lookahead bias.
+- The 24-month training set (January 2023 to December 2024) was partitioned into
+  four 6-month temporal epochs:
+    * Slice 1: Jan 2023 - Jun 2023
+    * Slice 2: Jul 2023 - Dec 2023
+    * Slice 3: Jan 2024 - Jun 2024
+    * Slice 4: Jul 2024 - Dec 2024 (Holdout Validation Split: 351,923 rows)
+- To avoid target leakage in stacking, Empirical Bayes log-odds were learned on
+  Slices 1 and 2 to transform Slice 3. The meta-stacker was trained on Slice 3 and
+  validated unconditionally on holdout Slice 4.
+
+
+3. MODEL ARCHITECTURE AND SCORE-IMPROVING FEATURES
+--------------------------------------------------
+- Architecture:
+  A Decoupled Two-Tower architecture was deployed:
+  * Tower 1 (Structural LightGBM): Trained with native categorical handling on
+    domain-engineered features including route corridors (cust_region -> store_region),
+    intra-region fulfillment friction, product volume and density, line spend
+    share, customer sequence timing, and basket-level bracketing signals (e.g.,
+    duplicate category purchases within an order, capturing size-bracketing returns).
+  * Tower 2 (Empirical Bayes Stacker): L2-regularized Logistic Regression trained on
+    out-of-time target log-odds of high-cardinality interaction entities
+    (store_x_region, route_x_format, supplier_code, and product_id).
+
+- Score Improvements & Post-Processing:
+  * Combining Tower 1 and Tower 2 in log-odds space improved validation AUC by
+    +0.00237 over the baseline LightGBM.
+  * Within-Order Peer Smoothing: For multi-item orders, individual item probabilities
+    were shrunk toward the order mean (alpha = 0.20), reflecting basket-level
+    correlated return propensity.
+  * Monthly Percentile Rank Alignment: Predictions were blended 50% global percentile
+    rank and 50% within-month percentile rank, preserving local ordering while
+    neutralizing macroeconomic cart-size shifts in the test period.
+  * Final inference utilized a 3-seed full-dataset ensemble refit (seeds 42, 2026, 777).
+
+
+4. CONTRIBUTIONS OF EACH TEAM MEMBER
+------------------------------------
+- Niraj Kushwaha:
+  Architected the end-to-end modular pipeline. Designed the point-in-time merge_asof
+  relational join logic to prevent future leakage. Engineered core supply-chain route
+  corridors, cart bracketing detection signals, and physical volumetric features.
+  Conducted LightGBM hyperparameter optimization and built the multi-seed full
+  training, prediction, and model serialization workflows.
+
+- Vishesh Bindal:
+  Conducted exploratory data analysis, dataset auditing, and forensic analysis of
+  anomalous December 2022 records and category typos. Formulated the Out-of-Time
+  Empirical Bayes log-odds feature extractor and Tower 2 regularized logistic stacker.
+  Implemented and tuned the within-order peer smoothing mechanism and validated the
+  hybrid monthly rank calibration scheme.
+================================================================================
